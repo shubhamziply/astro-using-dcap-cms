@@ -43,7 +43,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'http://localhost
     <meta name="twitter:image" content={image} />
 
     <!-- Netlify Identity Widget (needed for Decap CMS auth redirect) -->
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <script is:inline src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   </head>
   <body>
     <Header />
@@ -53,11 +53,11 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'http://localhost
     <Footer />
 
     <!-- Redirect after Netlify Identity login -->
-    <script>
+    <script is:inline>
       if (window.netlifyIdentity) {
-        window.netlifyIdentity.on('init', (user: unknown) => {
+        window.netlifyIdentity.on('init', function(user) {
           if (!user) {
-            window.netlifyIdentity.on('login', () => {
+            window.netlifyIdentity.on('login', function() {
               document.location.href = '/admin/';
             });
           }
