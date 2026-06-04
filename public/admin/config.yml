@@ -6,14 +6,13 @@
 # LOCAL DEV: Comment out the git-gateway block and uncomment local_backend.
 # =============================================================================
 
-# --- Production backend (Netlify + Git Gateway) ---
+# backend is always required. local_backend: true overrides it for local dev.
 backend:
   name: git-gateway
-  branch: main           # change to your default branch if different
+  branch: main
 
-# --- Local development backend ---
-# Uncomment these two lines and comment out the backend block above to use
-# the local proxy server (run `npx decap-server` in a second terminal).
+# Enables the local proxy (run `npx decap-server` in a second terminal).
+# Remove this line before deploying to production.
 # local_backend: true
 
 # Where uploaded media files are stored in the repo
