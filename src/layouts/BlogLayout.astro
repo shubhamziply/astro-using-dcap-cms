@@ -1,0 +1,155 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  date: Date;
+  author: string;
+  tags: string[];
+  thumbnail?: string;
+}
+
+const { title, description, date, author, tags, thumbnail } = Astro.props;
+
+const formattedDate = date.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<BaseLayout title={`${title} — Astro Blog`} description={description} image={thumbnail}>
+  <article class="container container--prose">
+    <!-- Back link -->
+    <nav class="back-nav">
+      <a href="/blog">← All Posts</a>
+    </nav>
+
+    <!-- Header -->
+    <header class="post-header">
+      {thumbnail && (
+        <div class="post-thumbnail">
+          <img src={thumbnail} alt={title} />
+        </div>
+      )}
+
+      <div class="post-meta">
+        {tags.map(tag => (
+          <span class="tag">{tag}</span>
+        ))}
+      </div>
+
+      <h1 class="post-title">{title}</h1>
+      <p class="post-description">{description}</p>
+
+      <div class="post-byline">
+        <span class="post-author">By {author}</span>
+        <span class="post-sep">·</span>
+        <time datetime={date.toISOString()}>{formattedDate}</time>
+      </div>
+    </header>
+
+    <hr />
+
+    <!-- Content -->
+    <div class="prose">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .back-nav {
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+  }
+
+  .back-nav a {
+    color: var(--color-text-muted);
+    font-weight: 500;
+  }
+
+  .back-nav a:hover {
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .post-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .post-thumbnail {
+    margin-bottom: 2rem;
+    border-radius: var(--radius);
+    overflow: hidden;
+    aspect-ratio: 16 / 7;
+  }
+
+  .post-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .post-title {
+    margin-bottom: 0.75rem;
+    font-size: clamp(1.75rem, 5vw, 2.75rem);
+  }
+
+  .post-description {
+    font-size: 1.1rem;
+    color: var(--color-text-muted);
+    margin-bottom: 1.25rem;
+    line-height: 1.6;
+  }
+
+  .post-byline {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+  }
+
+  .post-author {
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .post-sep {
+    color: var(--color-border);
+  }
+
+  /* Prose content styles */
+  .prose :global(h2) {
+    margin: 2.5rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .prose :global(h3) {
+    margin: 2rem 0 0.75rem;
+  }
+
+  .prose :global(p:first-child) {
+    font-size: 1.05rem;
+  }
+
+  .prose :global(img) {
+    border-radius: var(--radius);
+    margin: 1.5rem 0;
+  }
+
+  .prose :global(a) {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>

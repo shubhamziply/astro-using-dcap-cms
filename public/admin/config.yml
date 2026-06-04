@@ -1,0 +1,106 @@
+# =============================================================================
+# Decap CMS Configuration
+# =============================================================================
+#
+# PRODUCTION (Netlify): Use git-gateway backend (enabled below).
+# LOCAL DEV: Comment out the git-gateway block and uncomment local_backend.
+# =============================================================================
+
+# --- Production backend (Netlify + Git Gateway) ---
+backend:
+  name: git-gateway
+  branch: main           # change to your default branch if different
+
+# --- Local development backend ---
+# Uncomment these two lines and comment out the backend block above to use
+# the local proxy server (run `npx decap-server` in a second terminal).
+# local_backend: true
+
+# Where uploaded media files are stored in the repo
+media_folder: "public/images"
+
+# How the media files are referenced in content (relative to site root)
+public_folder: "/images"
+
+# Site URL shown in the CMS header
+site_url: "/"
+
+# Display URL for the "View site" link in the admin
+display_url: "/"
+
+# =============================================================================
+# Collections
+# =============================================================================
+
+collections:
+
+  # ---------------------------------------------------------------------------
+  # Blog Posts
+  # ---------------------------------------------------------------------------
+  - name: "blog"
+    label: "Blog Posts"
+    label_singular: "Blog Post"
+    folder: "src/content/blog"
+    create: true
+    delete: true
+    # Filename pattern: YYYY-MM-DD-my-post-title.md
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    # What shows in the list view
+    summary: "{{title}} — {{date}}"
+    # Sort newest first in the list
+    sortable_fields: ["date", "title", "author"]
+    view_filters:
+      - label: "Drafts"
+        field: draft
+        pattern: true
+      - label: "Published"
+        field: draft
+        pattern: false
+    fields:
+      - label: "Title"
+        name: "title"
+        widget: "string"
+        hint: "The post title shown on the blog listing and at the top of the post."
+
+      - label: "Publish Date"
+        name: "date"
+        widget: "datetime"
+        date_format: "YYYY-MM-DD"
+        time_format: false
+        hint: "The date the post was (or will be) published."
+
+      - label: "Description"
+        name: "description"
+        widget: "text"
+        hint: "A short summary shown on blog cards and in SEO meta tags (1–2 sentences)."
+
+      - label: "Author"
+        name: "author"
+        widget: "string"
+        default: "Anonymous"
+
+      - label: "Tags"
+        name: "tags"
+        widget: "list"
+        allow_add: true
+        hint: "Comma-separated tags, e.g. astro, web development, cms"
+        required: false
+
+      - label: "Featured Image"
+        name: "thumbnail"
+        widget: "image"
+        required: false
+        hint: "Optional hero image shown at the top of the post and on the blog card."
+        media_folder: "/public/images"
+        public_folder: "/images"
+
+      - label: "Draft"
+        name: "draft"
+        widget: "boolean"
+        default: false
+        hint: "When enabled, this post is hidden from the public site."
+
+      - label: "Body"
+        name: "body"
+        widget: "markdown"
+        hint: "The full post content. Supports Markdown formatting."

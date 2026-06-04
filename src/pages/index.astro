@@ -1,0 +1,200 @@
+---
+import { type CollectionEntry, getCollection } from "astro:content";
+import BlogCard from "../components/BlogCard.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const allPosts = await getCollection("blog", ({ data }) => !data.draft);
+const latestPosts = allPosts
+	.sort(
+		(a: CollectionEntry<"blog">, b: CollectionEntry<"blog">) =>
+			b.data.date.getTime() - a.data.date.getTime(),
+	)
+	.slice(0, 3);
+---
+
+<BaseLayout title="AstroBlog — Built with Astro & Decap CMS">
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-badge">Astro + Decap CMS</div>
+      <h1 class="hero-title">
+        A blog powered by<br />
+        <span class="accent">Git-based CMS</span>
+      </h1>
+      <p class="hero-sub">
+        Write posts in Markdown, manage them via a beautiful visual editor,
+        and deploy instantly — no database required.
+      </p>
+      <div class="hero-actions">
+        <a href="/blog" class="btn">Read the Blog</a>
+        <a href="/admin/" class="btn btn--outline" target="_blank" rel="noopener">Open Admin ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature strip -->
+  <section class="features">
+    <div class="container features-grid">
+      <div class="feature">
+        <div class="feature-icon">⚡</div>
+        <h3>Lightning Fast</h3>
+        <p>Astro generates zero-JS static HTML by default. Pages load instantly.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📝</div>
+        <h3>Visual Editor</h3>
+        <p>Non-developers can write and publish posts at <code>/admin</code> — no code needed.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔀</div>
+        <h3>Git-Powered</h3>
+        <p>Every post is a Markdown file in your repo. Full history, no lock-in.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🚀</div>
+        <h3>Deploy Anywhere</h3>
+        <p>Works with Netlify, Vercel, Cloudflare Pages — any static host.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Latest posts -->
+  {latestPosts.length > 0 && (
+    <section class="latest-posts">
+      <div class="container">
+        <div class="section-header">
+          <h2>Latest Posts</h2>
+          <a href="/blog" class="btn btn--outline">View all →</a>
+        </div>
+        <div class="posts-grid">
+          {latestPosts.map(post => (
+            <BlogCard
+              title={post.data.title}
+              description={post.data.description}
+              slug={post.id}
+              date={post.data.date}
+              author={post.data.author}
+              tags={post.data.tags}
+              thumbnail={post.data.thumbnail}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+</BaseLayout>
+
+<style>
+  /* Hero */
+  .hero {
+    padding: 5rem 0 4rem;
+    text-align: center;
+    background: radial-gradient(ellipse at 50% 0%, rgba(124, 106, 247, 0.12) 0%, transparent 65%);
+  }
+
+  .hero-inner {
+    max-width: 700px;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    padding: 0.35em 1em;
+    background: var(--color-accent-soft);
+    color: var(--color-accent);
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-title {
+    font-size: clamp(2.2rem, 6vw, 3.5rem);
+    line-height: 1.15;
+    margin-bottom: 1.25rem;
+  }
+
+  .accent {
+    background: linear-gradient(135deg, var(--color-accent), #a89cff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: 1.1rem;
+    color: var(--color-text-muted);
+    max-width: 520px;
+    margin: 0 auto 2rem;
+    line-height: 1.7;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* Features */
+  .features {
+    padding: 4rem 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2rem;
+  }
+
+  .feature {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .feature-icon {
+    font-size: 2rem;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+  }
+
+  .feature h3 {
+    font-size: 1rem;
+    color: var(--color-heading);
+  }
+
+  .feature p {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  /* Latest posts */
+  .latest-posts {
+    padding: 4rem 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .section-header h2 {
+    margin: 0;
+  }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+</style>
